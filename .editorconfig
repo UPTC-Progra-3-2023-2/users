@@ -1,0 +1,19 @@
+# Configuración para archivos Java
+root = true
+
+# Aplicar configuración a todos los archivos
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Configuración específica para archivos Java
+[*.java]
+# Usa tabs en lugar de espacios para la sangría
+indent_style = tab
+# Tamaño de la sangría (en espacios) para los archivos Java
+# (Nota: si prefieres espacios, establece "indent_style = space" y ajusta "indent_size" a tu preferencia)
+# indent_size = 4
