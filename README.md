@@ -175,4 +175,154 @@ spring.jpa.hibernate.ddl-auto=update
 **Nota: Recuerde cambiar los paremetros de acuerdo al nombre de usuario de su base de datos, contraseña y nombre de la base de datos** 
 
 
+#### Consulta personalizada
+
+```
+
+@Repository
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    @Query("SELECT u FROM Usuario u WHERE u.email = :correo AND u.username = :nombreDeUsuario")
+    Usuario findUsuarioPorEmailYUsername(@Param("correo") String email, @Param("nombreDeUsuario") String username);
+}
+
+```
+
+```
+
+@Repository
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    Usuario findByEmailAndUsername(String email, String username);
+}
+
+```
+
+```
+
+@Entity
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String email;
+    private String username;
+    
+    // Otros campos y getters/setters
+}
+
+```
+
+#### Guardar un nuevo registro
+
+```
+
+@Service
+public class UsuarioService {
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public Usuario guardarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+}
+
+```
+
+#### Actualizar un registro
+
+```
+
+@Service
+public class ProductService {
+    @Autowired
+    private ProductRepository productRepository;
+
+    public Product updateProduct(Long productId, Product updatedProduct) {
+        // Verificar si el producto existe
+        Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        // Actualizar los campos del producto existente con los valores del producto actualizado
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setPrice(updatedProduct.getPrice());
+
+        // Guardar la actualización en la base de datos
+        return productRepository.save(existingProduct);
+    }
+}
+
+```
+
+#### Eliminar un registro
+
+```
+
+@Service
+public class UsuarioService {
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public void eliminarUsuarioPorId(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+}
+
+```
+
+#### Consultar por ID
+
+```
+
+@Service
+public class UsuarioService {
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public Usuario obtenerUsuarioPorId(Long id) {
+        return usuarioRepository.findById(id)
+                .orElse(null); // Devuelve null si el usuario no se encuentra
+    }
+}
+
+```
+
+
+#### Usar query params
+
+```
+
+@GetMapping(value = "")
+  public ResponseEntity<Object> paymentProcess(
+      @RequestParam(name="date") Optional<String> dateQuery,
+      @RequestParam(name="authorization_code") Optional<String> authQuery,
+      @RequestParam(name="store_number") Optional<String> storeNumberQuery
+      ) {
+    try {
+      String date = dateQuery.orElse(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+      String authCode = authQuery.orElse(null);
+      String storeNumber = storeNumberQuery.orElse(null);
+
+      List<PaymentsResponse> list = paymentProcessorInteractor.proccessPayment(date, authCode, storeNumber);
+      return new ResponseEntity<>(list, HttpStatus.OK);
+    } catch(Exception e) {
+      return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+ 
+ ```
+ 
+ 
+#### Usar Path param
+ 
+ ```
+@RequestMapping("/usuarios")
+public class UsuarioController {
+    @GetMapping("/{id}")
+    public ResponseEntity<String> obtenerUsuarioPorId(@PathVariable Long id) {
+        // Aquí puedes realizar operaciones para buscar el usuario con el ID proporcionado.
+        // En este ejemplo, simplemente devolvemos un mensaje de respuesta con el ID recibido.
+        return ResponseEntity.ok("ID del usuario recibido: " + id);
+    }
+}
+
+```
 
