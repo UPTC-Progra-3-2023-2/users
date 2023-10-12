@@ -45,3 +45,134 @@ mvn spring-boot:run
 ###### Documentación relacionada
 * [Documentación Docker](https://docs.docker.com/)
 * [Fabric8 Maven Plugin](https://maven.fabric8.io/)
+
+#### Configurar base de datos
+
+Para configurar la base de datos en un proyecto con sprint boot asegurese de tener importadas las librerias de JPA y el conector de la base de datos de acuerdo al motor que va a utilizar (MySQL, PostgreSQL, Oracle ...)
+
+##### Importar JPA
+
+- Busque el archivo **pom.xml** de su proyecto 
+- Identifique el tag **dependencies**
+- Dentro del tag dependencies agregue el siguente comando para importar la libreria de JPA
+
+```
+
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+```
+- Ajuste las identaciones de ser necesario
+
+#### Configurar MySQL DB
+
+Si el motor de base de datos que va ha utilizar en el proyecto es MySQL siga estos pasos para configurar la base de datos.
+
+##### Importar Conector para MySQL
+- Busque el archivo **pom.xml** de su proyecto 
+- Identifique el tag **dependencies**
+- Dentro del tag dependencies agregue el siguente comando para importar la libreria de JPA
+
+```
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+</dependency>
+
+```
+
+##### Configurar conexion a base de datos MySQL
+
+dentro del archivo **application.properties** ubicado en **src/main/resources** coloque las siguentes sentencias
+
+```
+
+spring.datasource.url=jdbc:mysql://localhost:3306/nombre_de_la_base_de_datos
+spring.datasource.username=tu_usuario_de_mysql
+spring.datasource.password=tu_contraseña_de_mysql
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+```
+
+**Nota: Recuerde cambiar los paremetros de acuerdo al nombre de usuario de su base de datos, contraseña y nombre de la base de datos**
+
+##### Ejecutar Mysql server con Docker
+
+Abra una terminal en su equipo. **Nota: Docker debe estar instalado y corriendo en su equipo**
+
+Para verificar que se esta ejecutando docker ejecute el siguente comando
+
+```
+
+docker ps
+
+```
+
+No se debe generar ningun error al ejecutar este comando
+
+Ejecute el siguente comando para correr el servidor de mysql
+
+```
+
+docker run -d --name=mysql-container -e MYSQL_ROOT_PASSWORD=tu_contrasena -e MYSQL_USER=tu_usuario -e MYSQL_PASSWORD=tu_contrasena -e MYSQL_DATABASE=nombre_de_la_base_de_datos -p 3306:3306 mysql:latest
+
+
+```
+
+Aqui hay una breve explicación de los parámetros utilizados en el comando:
+
+```
+* -d: Ejecuta el contenedor en segundo plano (modo daemon).
+* --name=mysql-container: Asigna un nombre al contenedor, en este caso, "mysql-container".
+* -e MYSQL_ROOT_PASSWORD=tu_contrasena: Establece la contraseña del usuario root de MySQL.
+* -e MYSQL_USER=tu_usuario: Establece el nombre de usuario personalizado que deseas crear.
+* -e MYSQL_PASSWORD=tu_contrasena: Establece la contraseña para el usuario personalizado.
+* -e MYSQL_DATABASE=nombre_de_la_base_de_datos: Crea una base de datos con el nombre especificado.
+* -p 3306:3306: Mapea el puerto 3306 del contenedor al puerto 3306 del host. Esto permite acceder a la base de datos MySQL desde fuera del contenedor.
+```
+
+#### Configurar PostgreSQL DB
+
+Si el motor de base de datos que va ha utilizar en el proyecto es MySQL siga estos pasos para configurar la base de datos.
+
+##### Importar Conector para PostreSQL
+- Busque el archivo **pom.xml** de su proyecto 
+- Identifique el tag **dependencies**
+- Dentro del tag dependencies agregue el siguente comando para importar la libreria de JPA
+
+```
+
+<dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+</dependency>
+
+```
+
+##### Configurar conexion a base de datos PostgreSQL
+
+dentro del archivo **application.properties** ubicado en **src/main/resources** coloque las siguentes sentencias
+
+```
+
+spring.datasource.url=jdbc:postgresql://192.168.1.4:5432/users
+spring.datasource.username=postgres
+spring.datasource.password=mysecretpassword
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+
+```
+
+**Nota: Recuerde cambiar los paremetros de acuerdo al nombre de usuario de su base de datos, contraseña y nombre de la base de datos** 
+
+
+
